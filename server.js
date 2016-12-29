@@ -1,5 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var validator = require('validator');
 var {urlModel} = require('./db/models/urls');
 
 const PORT = process.env.PORT || 3000;
@@ -11,7 +12,12 @@ mongoose.connect(DB);
 var app = express()
 
 app.get('/new/:url*', function(req, res) {
-  res.send(JSON.stringify(shortenURL(req)));
+  if (validator.isURL(req.params.url + req.params[0])) {
+    res.send(JSON.stringify(shortenURL(req)));
+  } else {
+    res.send(JSON.stringify({error: 'Please provide a valid URL'}));
+  }
+
 });
 
 app.get('/:key', (req, res) => {
